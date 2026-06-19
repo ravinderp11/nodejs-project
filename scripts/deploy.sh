@@ -1,11 +1,19 @@
 #!/bin/bash
 
-cd terraform
+set -e
+
+echo "Move to Terraform folder"
+
+cd Terraform
+
+echo "Initialize Terraform"
 
 terraform init
 
-terraform apply \
--auto-approve \
--var="subnet1=subnet-06d82a3e886c42930" \
--var="subnet2=subnet-0f7431ee89ac2b19b" \
--var="sg=sg-016b8014c069d78f5"
+echo "Validate"
+
+terraform validate
+
+echo "Deploy"
+
+terraform apply -auto-approve
