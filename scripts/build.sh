@@ -2,26 +2,31 @@
 
 set -e
 
-AWS_REGION="us-east-1"
-ECR_URL="496097747127.dkr.ecr.us-east-1.amazonaws.com/nodejs-app"
+REGION="us-east-1"
+ACCOUNT="496097747127"
+REPO="nodejs-app"
 
 echo "Login to ECR"
 
 aws ecr get-login-password \
---region $AWS_REGION | \
+--region $REGION | \
 docker login \
 --username AWS \
 --password-stdin \
-496097747127.dkr.ecr.us-east-1.amazonaws.com
+$ACCOUNT.dkr.ecr.$REGION.amazonaws.com
 
 echo "Build Docker"
 
-docker build -t node-app ./app
+cd app
+
+docker build -t node-app .
 
 echo "Tag Docker"
 
-docker tag node-app:latest $ECR_URL:latest
+docker tag node-app:latest \
+$ACCOUNT.dkr.ecr.$REGION.amazonaws.com/$REPO:latest
 
 echo "Push Docker"
 
-docker push $ECR_URL:latest
+docker push \
+$ACCOUNT.dkr.ecr.$REGION.amazonaws.com/$REPO:latest
