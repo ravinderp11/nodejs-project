@@ -1,0 +1,39 @@
+pipeline {
+
+agent any
+
+stages {
+
+stage('Checkout') {
+
+steps {
+
+checkout scm
+
+}
+
+}
+
+stage('Build Docker') {
+
+steps {
+
+sh './scripts/build.sh'
+
+}
+
+}
+
+stage('Deploy ECS') {
+
+steps {
+
+sh './scripts/deploy.sh'
+
+}
+
+}
+
+}
+
+}
