@@ -1,5 +1,5 @@
-output "ecr_url" {
+variable "subnet1" {}
 
-value = aws_ecr_repository.repo.repository_url
+variable "subnet2" {}
 
-}
+variable "sg" {}
