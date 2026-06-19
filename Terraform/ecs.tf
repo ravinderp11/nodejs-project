@@ -1,73 +1,66 @@
 resource "aws_ecs_cluster" "cluster" {
 
-name="node-cluster"
+  name = "node-cluster"
 
 }
 
 resource "aws_ecs_task_definition" "task" {
 
-family="node"
+  family = "node-app"
 
-requires_compatibilities=["FARGATE"]
+  requires_compatibilities = ["FARGATE"]
 
-network_mode="awsvpc"
+  network_mode = "awsvpc"
 
-cpu="256"
+  cpu = "256"
 
-memory="512"
+  memory = "512"
 
-execution_role_arn=
-"arn:aws:iam::YOUR_ACCOUNT_ID:role/ecsTaskExecutionRole"
+  execution_role_arn = "arn:aws:iam::496097747127:role/ecsTaskExecutionRole"
 
-container_definitions=jsonencode([{
+  container_definitions = jsonencode([
+    {
+      name = "node-app"
 
-name="node"
+      image = "${aws_ecr_repository.repo.repository_url}:latest"
 
-image=
-"${aws_ecr_repository.repo.repository_url}:latest"
+      essential = true
 
-essential=true
-
-portMappings=[{
-
-containerPort=3000
-
-}]
-
-}])
+      portMappings = [
+        {
+          containerPort = 3000
+        }
+      ]
+    }
+  ])
 
 }
 
 resource "aws_ecs_service" "service" {
 
-name="node-service"
+  name = "node-service"
 
-cluster=
-aws_ecs_cluster.cluster.id
+  cluster = aws_ecs_cluster.cluster.id
 
-task_definition=
-aws_ecs_task_definition.task.arn
+  task_definition = aws_ecs_task_definition.task.arn
 
-desired_count=1
+  desired_count = 1
 
-launch_type="FARGATE"
+  launch_type = "FARGATE"
 
-network_configuration {
+  network_configuration {
 
-subnets=[
+    subnets = [
+      var.subnet1,
+      var.subnet2
+    ]
 
-var.subnet1,
+    security_groups = [
+      var.sg
+    ]
 
-var.subnet2
+    assign_public_ip = true
 
-]
-
-security_groups=[
-
-var.sg]
-
-assign_public_ip=true
-
-}
+  }
 
 }
